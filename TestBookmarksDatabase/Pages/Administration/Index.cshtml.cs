@@ -6,23 +6,25 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using TestBookmarksDatabase.Models;
+using TestBookmarksDatabase.Services;
+using TestBookmarksDatabase.ViewModels;
 
 namespace TestBookmarksDatabase.Administration
 {
     public class IndexModel : PageModel
     {
-        private readonly TestBookmarksDatabase.Models.ApplicationDbContext _context;
+        private IBookmarksManager _bookmarksManager;
 
-        public IndexModel(TestBookmarksDatabase.Models.ApplicationDbContext context)
+        public IndexModel(IBookmarksManager bookmarksManager)
         {
-            _context = context;
+            _bookmarksManager = bookmarksManager;
         }
 
-        public IList<Bookmark> Bookmark { get;set; }
+        public IList<BookmarksListViewModel> Bookmarks { get;set; }
 
-        public async Task OnGetAsync()
+        public void OnGetAsync()
         {
-            Bookmark = await _context.Bookmarks.ToListAsync();
+            Bookmarks = _bookmarksManager.List().ToList();
         }
     }
 }

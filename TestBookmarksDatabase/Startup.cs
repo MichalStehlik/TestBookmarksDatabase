@@ -10,6 +10,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TestBookmarksDatabase.Models;
+using TestBookmarksDatabase.Services;
 
 namespace TestBookmarksDatabase
 {
@@ -28,6 +29,7 @@ namespace TestBookmarksDatabase
             services.AddDbContext<ApplicationDbContext>(options =>
                 options.UseSqlite(
                     Configuration.GetConnectionString("DefaultConnection")));
+            services.AddScoped<IBookmarksManager, BookmarksManager>();
             services.AddRazorPages();
         }
 

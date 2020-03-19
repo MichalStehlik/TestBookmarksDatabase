@@ -14,34 +14,28 @@
     <thead>
         <tr>
             <th>
-                @Html.DisplayNameFor(model => model.Bookmark[0].Title)
+                @Html.DisplayNameFor(model => model.Bookmarks[0].Title)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Bookmark[0].Description)
+                @Html.DisplayNameFor(model => model.Bookmarks[0].Url)
             </th>
             <th>
-                @Html.DisplayNameFor(model => model.Bookmark[0].Url)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Bookmark[0].OwnerId)
+                @Html.DisplayNameFor(model => model.Bookmarks[0].OwnerUserName)
             </th>
             <th></th>
         </tr>
     </thead>
     <tbody>
-@foreach (var item in Model.Bookmark) {
+@foreach (var item in Model.Bookmarks) {
         <tr>
             <td>
                 @Html.DisplayFor(modelItem => item.Title)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
                 @Html.DisplayFor(modelItem => item.Url)
             </td>
             <td>
-                @Html.DisplayFor(modelItem => item.OwnerId)
+                @Html.DisplayFor(modelItem => item.OwnerUserName)
             </td>
             <td>
                 <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |

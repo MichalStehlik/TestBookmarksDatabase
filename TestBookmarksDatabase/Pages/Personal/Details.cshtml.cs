@@ -6,28 +6,29 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using TestBookmarksDatabase.Models;
+using TestBookmarksDatabase.Services;
 
 namespace TestBookmarksDatabase.Personal
 {
     public class DetailsModel : PageModel
     {
-        private readonly TestBookmarksDatabase.Models.ApplicationDbContext _context;
+        private IBookmarksManager _bookmarksManager;
 
-        public DetailsModel(TestBookmarksDatabase.Models.ApplicationDbContext context)
+        public DetailsModel(IBookmarksManager bookmarksManager)
         {
-            _context = context;
+            _bookmarksManager = bookmarksManager;
         }
 
         public Bookmark Bookmark { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGet(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Bookmark = await _context.Bookmarks.FirstOrDefaultAsync(m => m.Id == id);
+            Bookmark = _bookmarksManager.Read((int)id);
 
             if (Bookmark == null)
             {

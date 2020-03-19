@@ -6,29 +6,30 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using TestBookmarksDatabase.Models;
+using TestBookmarksDatabase.Services;
 
 namespace TestBookmarksDatabase.Personal
 {
     public class DeleteModel : PageModel
     {
-        private readonly TestBookmarksDatabase.Models.ApplicationDbContext _context;
+        private IBookmarksManager _bookmarksManager;
 
-        public DeleteModel(TestBookmarksDatabase.Models.ApplicationDbContext context)
+        public DeleteModel(IBookmarksManager bookmarksManager)
         {
-            _context = context;
+            _bookmarksManager = bookmarksManager;
         }
 
         [BindProperty]
         public Bookmark Bookmark { get; set; }
 
-        public async Task<IActionResult> OnGetAsync(int? id)
+        public IActionResult OnGetAsync(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Bookmark = await _context.Bookmarks.FirstOrDefaultAsync(m => m.Id == id);
+            Bookmark = _bookmarksManager.Read((int)id);
 
             if (Bookmark == null)
             {
@@ -37,19 +38,18 @@ namespace TestBookmarksDatabase.Personal
             return Page();
         }
 
-        public async Task<IActionResult> OnPostAsync(int? id)
+        public IActionResult OnPost(int? id)
         {
             if (id == null)
             {
                 return NotFound();
             }
 
-            Bookmark = await _context.Bookmarks.FindAsync(id);
+            Bookmark = _bookmarksManager.Read((int)id);
 
             if (Bookmark != null)
             {
-                _context.Bookmarks.Remove(Bookmark);
-                await _context.SaveChangesAsync();
+                _bookmarksManager.Delete((int)id);
             }
 
             return RedirectToPage("./Index");

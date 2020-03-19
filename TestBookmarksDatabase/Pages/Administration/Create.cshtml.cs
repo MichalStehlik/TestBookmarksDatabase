@@ -6,16 +6,17 @@ using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
 using TestBookmarksDatabase.Models;
+using TestBookmarksDatabase.Services;
 
 namespace TestBookmarksDatabase.Administration
 {
     public class CreateModel : PageModel
     {
-        private readonly TestBookmarksDatabase.Models.ApplicationDbContext _context;
+        private IBookmarksManager _bookmarksManager;
 
-        public CreateModel(TestBookmarksDatabase.Models.ApplicationDbContext context)
+        public CreateModel(IBookmarksManager bookmarksManager)
         {
-            _context = context;
+            _bookmarksManager = bookmarksManager;
         }
 
         public IActionResult OnGet()
@@ -29,15 +30,14 @@ namespace TestBookmarksDatabase.Administration
 
         // To protect from overposting attacks, please enable the specific properties you want to bind to, for
         // more details see https://aka.ms/RazorPagesCRUD.
-        public async Task<IActionResult> OnPostAsync()
+        public IActionResult OnPost()
         {
             if (!ModelState.IsValid)
             {
                 return Page();
             }
 
-            _context.Bookmarks.Add(Bookmark);
-            await _context.SaveChangesAsync();
+            _bookmarksManager.Create(Bookmark);
 
             return RedirectToPage("./Index");
         }

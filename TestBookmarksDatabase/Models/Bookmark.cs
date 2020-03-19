@@ -18,9 +18,7 @@ namespace TestBookmarksDatabase.Models
         [Required]
         public Guid OwnerId { get; set; }
 
-        /*
         [ForeignKey("OwnerId")]
-        public IdentityUser Owner { get; set; }
-        */
+        public User Owner { get; set; }
     }
 }
