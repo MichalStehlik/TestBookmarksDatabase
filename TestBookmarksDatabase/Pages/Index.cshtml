@@ -1,0 +1,13 @@
+﻿@page
+@model IndexModel
+@{
+    ViewData["Title"] = "Home page";
+}
+
+<div class="text-center">
+    <h1 class="display-4">Your bookmarks in one place.</h1>
+    <p>Log in and start to browse.</p>
+    <div class="text-center">
+        <a class="btn btn-primary" asp-page="./Personal/Index">My Bookmarks</a> <a class="btn btn-secondary" asp-page="./Administration/Index">Administration</a>
+    </div>
+</div>
