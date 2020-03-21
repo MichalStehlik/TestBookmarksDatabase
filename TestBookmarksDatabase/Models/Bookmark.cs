@@ -1,8 +1,10 @@
-﻿using System;
+﻿using Microsoft.AspNetCore.Identity;
+using System;
 using System.Collections.Generic;
 using System.ComponentModel.DataAnnotations;
 using System.ComponentModel.DataAnnotations.Schema;
 using System.Linq;
+using System.Text.Json.Serialization;
 using System.Threading.Tasks;
 
 namespace TestBookmarksDatabase.Models
@@ -19,6 +21,8 @@ namespace TestBookmarksDatabase.Models
         public Guid OwnerId { get; set; }
 
         [ForeignKey("OwnerId")]
-        public User Owner { get; set; }
+        public IdentityUser<Guid> Owner { get; set; }
+        [JsonIgnore]
+        public ICollection<Bookmark> Bookmarks { get; set; }
     }
 }

@@ -1,0 +1,64 @@
+﻿@page
+@using TestBookmarksDatabase.ViewModels
+@model TestBookmarksDatabase.Administration.Bookmarks.IndexModel
+
+@{
+    ViewData["Title"] = "Index";
+}
+
+<h1>Index</h1>
+<p>
+    <a asp-page="Create">Create New</a>
+</p>
+<form asp-page="./Index" method="get" class="form-inline">
+    <label class="sr-only" for="Search">Filter</label>
+    <input type="text" class="form-control mb-2 mr-sm-2" asp-for="@Model.SearchFilter" />
+    <select class="form-control mb-2 mr-sm-2" asp-for="@Model.OwnerFilter" asp-items="@Model.UserList">
+        <option value="">-- all --</option>
+    </select>
+    <input type="hidden" asp-"for="@Model.Order" />
+    <input type="submit" value="Search" class="btn btn-primary mb-2 mr-1" /> <a asp-page="./Index" class="btn btn-secondary mb-2">All</a>
+</form>
+<table class="table">
+    <thead>
+        <tr>
+            <th>
+                @if (Model.Order == BookmarkListOrder.Title)
+                {
+                    <a asp-route-order="@BookmarkListOrder.TitleDescending" asp-route-searchFilter="@Model.SearchFilter">@Html.DisplayNameFor(model => model.Bookmarks[0].Title)</a>
+                }
+                else
+                {
+                    <a asp-route-order="@BookmarkListOrder.Title" asp-route-searchFilter="@Model.SearchFilter">@Html.DisplayNameFor(model => model.Bookmarks[0].Title)</a>
+                }
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bookmarks[0].Url)
+            </th>
+            <th>
+                @Html.DisplayNameFor(model => model.Bookmarks[0].OwnerUserName)
+            </th>
+            <th></th>
+        </tr>
+    </thead>
+    <tbody>
+@foreach (var item in Model.Bookmarks) {
+        <tr>
+            <td>
+                @Html.DisplayFor(modelItem => item.Title)
+            </td>
+            <td>
+                <a href="@item.Url">@Html.DisplayFor(modelItem => item.Url)</a>
+            </td>
+            <td>
+                <a asp-page="/Administration/Users/Index" asp-route-id="@item.OwnerId">@Html.DisplayFor(modelItem => item.OwnerUserName)</a>
+            </td>
+            <td>
+                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
+                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
+                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
+            </td>
+        </tr>
+}
+    </tbody>
+</table>

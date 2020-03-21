@@ -18,7 +18,7 @@ namespace TestBookmarksDatabase.Services
             _context = context;
         }
 
-        public Bookmark Create(Bookmark bookmark)
+        public async Task<Bookmark> Create(Bookmark bookmark)
         {
             var newBookmark = new Bookmark
             {
@@ -28,7 +28,7 @@ namespace TestBookmarksDatabase.Services
                 OwnerId = bookmark.OwnerId
             };
             _context.Bookmarks.Add(newBookmark);
-            _context.SaveChangesAsync();
+            await _context.SaveChangesAsync();
             return newBookmark;
         }
 
@@ -37,19 +37,21 @@ namespace TestBookmarksDatabase.Services
             return _context.Bookmarks.Any(e => e.Id == id);
         }
 
-        public Bookmark Read(int id)
+        public async Task<Bookmark> Read(int id)
         {
-            var bookmark = _context.Bookmarks.Where(b => b.Id == id).FirstOrDefault();
+            var bookmark = await _context.Bookmarks.Include(b => b.Owner).Where(b => b.Id == id).FirstOrDefaultAsync();
             return bookmark;
         }
 
-        public ICollection<BookmarksListViewModel> List(Guid? ownerId = null, string search = "", string title = "", BookmarkListOrder order = BookmarkListOrder.None, int page = 0, int pagesize = 0)
+        public async Task<IList<BookmarksListViewModel>> List(Guid? ownerId = null, string search = "", string title = "", BookmarkListOrder order = BookmarkListOrder.None, int page = 0, int pagesize = 0)
         {
             IQueryable<Bookmark> bookmarks = _context.Bookmarks;
             if (!String.IsNullOrEmpty(search))
                 bookmarks = bookmarks.Where(b => (b.Title.Contains(search) || b.Description.Contains(search) || b.Url.Contains(search)));
             if (!String.IsNullOrEmpty(title))
                 bookmarks = bookmarks.Where(b => (b.Title.Contains(search)));
+            if (ownerId != Guid.Empty)
+                bookmarks = bookmarks.Where(b => (b.OwnerId == ownerId));
             switch (order)
             {
                 case BookmarkListOrder.Title:
@@ -65,12 +67,12 @@ namespace TestBookmarksDatabase.Services
             {
                 bookmarks = bookmarks.Skip(page * pagesize).Take(pagesize);
             }
-            return bookmarks.Select(b => new BookmarksListViewModel { Id = b.Id, Title = b.Title, OwnerId = b.OwnerId, Url = b.Url, OwnerUserName = b.Owner.UserName}).ToList();
+            return await bookmarks.Select(b => new BookmarksListViewModel { Id = b.Id, Title = b.Title, OwnerId = b.OwnerId, Url = b.Url, OwnerUserName = b.Owner.UserName}).ToListAsync();
         }
 
-        Bookmark IBookmarksManager.Delete(int id)
+        public async Task<Bookmark> Delete(int id)
         {
-            Bookmark bm = _context.Bookmarks.Where(b => b.Id == id).FirstOrDefault();
+            Bookmark bm = await _context.Bookmarks.Where(b => b.Id == id).FirstOrDefaultAsync();
             if (bm != null)
             {
                 _context.Bookmarks.Remove(bm);
@@ -79,9 +81,9 @@ namespace TestBookmarksDatabase.Services
             return bm;
         }
 
-        Bookmark IBookmarksManager.Update(int id, Bookmark input)
+        public async Task<Bookmark> Update(int id, Bookmark input)
         {
-            Bookmark bm = _context.Bookmarks.Where(b => b.Id == id).FirstOrDefault();
+            Bookmark bm = await _context.Bookmarks.Where(b => b.Id == id).FirstOrDefaultAsync();
             if (bm != null)
             {
                 _context.Attach(bm).State = EntityState.Modified;
@@ -93,11 +95,5 @@ namespace TestBookmarksDatabase.Services
             }
             return null;
         }
-    }
-
-    public enum BookmarkListOrder {
-        None,
-        Title,
-        TitleDescending
     }
 }
