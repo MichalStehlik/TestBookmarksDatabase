@@ -5,6 +5,20 @@
   </PropertyGroup>
 
   <ItemGroup>
+    <Compile Remove="Migrations\20200319205320_BookmarksTable.cs" />
+    <Compile Remove="Migrations\20200319205320_BookmarksTable.Designer.cs" />
+    <Compile Remove="Migrations\20200320202411_Identity.cs" />
+    <Compile Remove="Migrations\20200320202411_Identity.Designer.cs" />
+    <Compile Remove="Migrations\20200320202612_IdentityBookmark.cs" />
+    <Compile Remove="Migrations\20200320202612_IdentityBookmark.Designer.cs" />
+    <Compile Remove="Migrations\20200321192608_Admin.cs" />
+    <Compile Remove="Migrations\20200321192608_Admin.Designer.cs" />
+  </ItemGroup>
+
+  <ItemGroup>
+    <PackageReference Include="MailKit" Version="2.5.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.EntityFrameworkCore" Version="3.1.2" />
+    <PackageReference Include="Microsoft.AspNetCore.Identity.UI" Version="3.1.2" />
     <PackageReference Include="Microsoft.EntityFrameworkCore.Design" Version="3.1.2">
       <PrivateAssets>all</PrivateAssets>
       <IncludeAssets>runtime; build; native; contentfiles; analyzers; buildtransitive</IncludeAssets>

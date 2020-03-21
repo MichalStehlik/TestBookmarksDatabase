@@ -10,9 +10,9 @@
 <h4>Bookmark</h4>
 <hr />
 <div class="row">
-    <div class="col-md-4">
+    <div class="col-md-4">  
         <form method="post">
-            <div asp-validation-summary="ModelOnly" class="text-danger"></div>
+            <div asp-validation-summary="All" class="text-danger"></div>
             <div class="form-group">
                 <label asp-for="Bookmark.Title" class="control-label"></label>
                 <input asp-for="Bookmark.Title" class="form-control" />
@@ -27,11 +27,6 @@
                 <label asp-for="Bookmark.Url" class="control-label"></label>
                 <input asp-for="Bookmark.Url" class="form-control" />
                 <span asp-validation-for="Bookmark.Url" class="text-danger"></span>
-            </div>
-            <div class="form-group">
-                <label asp-for="Bookmark.OwnerId" class="control-label"></label>
-                <input asp-for="Bookmark.OwnerId" class="form-control" />
-                <span asp-validation-for="Bookmark.OwnerId" class="text-danger"></span>
             </div>
             <div class="form-group">
                 <input type="submit" value="Create" class="btn btn-primary" />

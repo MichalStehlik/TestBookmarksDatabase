@@ -1,54 +1,13 @@
 ﻿@page
-@model TestBookmarksDatabase.Administration.IndexModel
-
+@model TestBookmarksDatabase.IndexModel
 @{
     ViewData["Title"] = "Index";
 }
 
-<h1>Index</h1>
+<h1>Administration</h1>
 
-<p>
-    <a asp-page="Create">Create New</a>
-</p>
-<table class="table">
-    <thead>
-        <tr>
-            <th>
-                @Html.DisplayNameFor(model => model.Bookmark[0].Title)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Bookmark[0].Description)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Bookmark[0].Url)
-            </th>
-            <th>
-                @Html.DisplayNameFor(model => model.Bookmark[0].OwnerId)
-            </th>
-            <th></th>
-        </tr>
-    </thead>
-    <tbody>
-@foreach (var item in Model.Bookmark) {
-        <tr>
-            <td>
-                @Html.DisplayFor(modelItem => item.Title)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Description)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.Url)
-            </td>
-            <td>
-                @Html.DisplayFor(modelItem => item.OwnerId)
-            </td>
-            <td>
-                <a asp-page="./Edit" asp-route-id="@item.Id">Edit</a> |
-                <a asp-page="./Details" asp-route-id="@item.Id">Details</a> |
-                <a asp-page="./Delete" asp-route-id="@item.Id">Delete</a>
-            </td>
-        </tr>
-}
-    </tbody>
-</table>
+<div>
+    <a class="btn btn-secondary" asp-page="/Administration/Users/Index">Users</a>
+    <a class="btn btn-secondary" asp-page="/Administration/Roles/Index">Roles</a>
+    <a class="btn btn-secondary" asp-page="/Administration/Bookmarks/Index">Bookmarks</a>
+</div>

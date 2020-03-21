@@ -3,6 +3,8 @@ using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Builder;
+using Microsoft.AspNetCore.Identity;
+using Microsoft.AspNetCore.Identity.UI;
 using Microsoft.AspNetCore.Hosting;
 using Microsoft.AspNetCore.HttpsPolicy;
 using Microsoft.EntityFrameworkCore;
@@ -10,6 +12,7 @@ using Microsoft.Extensions.Configuration;
 using Microsoft.Extensions.DependencyInjection;
 using Microsoft.Extensions.Hosting;
 using TestBookmarksDatabase.Models;
+using TestBookmarksDatabase.Services;
 
 namespace TestBookmarksDatabase
 {
@@ -26,9 +29,26 @@ namespace TestBookmarksDatabase
         public void ConfigureServices(IServiceCollection services)
         {
             services.AddDbContext<ApplicationDbContext>(options =>
-                options.UseSqlite(
+                options.UseSqlServer(
                     Configuration.GetConnectionString("DefaultConnection")));
-            services.AddRazorPages();
+            services.AddIdentity<IdentityUser<Guid>,IdentityRole<Guid>>(options =>
+            {
+                options.SignIn.RequireConfirmedAccount = true;
+                options.Password.RequiredLength = 6;
+                options.User.RequireUniqueEmail = true;
+                options.SignIn.RequireConfirmedEmail = false;
+            }
+            )
+            .AddEntityFrameworkStores<ApplicationDbContext>()
+            //.AddDefaultUI()
+            .AddDefaultTokenProviders();
+
+            services.AddScoped<IBookmarksManager, BookmarksManager>();
+            services.AddScoped<IEmailSender, EmailSender>();
+            services.AddRazorPages(options =>
+            {
+
+            });
         }
 
         // This method gets called by the runtime. Use this method to configure the HTTP request pipeline.
@@ -50,6 +70,7 @@ namespace TestBookmarksDatabase
 
             app.UseRouting();
 
+            app.UseAuthentication();
             app.UseAuthorization();
 
             app.UseEndpoints(endpoints =>

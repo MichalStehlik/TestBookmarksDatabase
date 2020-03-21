@@ -1,21 +1,29 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Threading.Tasks;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.EntityFrameworkCore;
 using TestBookmarksDatabase.Models;
+using TestBookmarksDatabase.Services;
 
 namespace TestBookmarksDatabase.Personal
 {
     public class DeleteModel : PageModel
     {
-        private readonly TestBookmarksDatabase.Models.ApplicationDbContext _context;
+        private IBookmarksManager _bookmarksManager;
+        [TempData]
+        public string ErrorMessage { get; set; }
+        [TempData]
+        public string SuccessMessage { get; set; }
+        [TempData]
+        public string InfoMessage { get; set; }
 
-        public DeleteModel(TestBookmarksDatabase.Models.ApplicationDbContext context)
+        public DeleteModel(IBookmarksManager bookmarksManager)
         {
-            _context = context;
+            _bookmarksManager = bookmarksManager;
         }
 
         [BindProperty]
@@ -28,11 +36,17 @@ namespace TestBookmarksDatabase.Personal
                 return NotFound();
             }
 
-            Bookmark = await _context.Bookmarks.FirstOrDefaultAsync(m => m.Id == id);
+            Bookmark = await _bookmarksManager.Read((int)id);
 
             if (Bookmark == null)
             {
                 return NotFound();
+            }
+            var currentUserId = Guid.Parse(User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value);
+            if (Bookmark.OwnerId != currentUserId)
+            {
+                ErrorMessage = "You are not allowed to delete this bookmark.";
+                return RedirectToPage("/Index");
             }
             return Page();
         }
@@ -44,12 +58,26 @@ namespace TestBookmarksDatabase.Personal
                 return NotFound();
             }
 
-            Bookmark = await _context.Bookmarks.FindAsync(id);
+            Bookmark = _bookmarksManager.Read((int)id).Result;
 
             if (Bookmark != null)
             {
-                _context.Bookmarks.Remove(Bookmark);
-                await _context.SaveChangesAsync();
+                var currentUserId = Guid.Parse(User.Claims.Where(c => c.Type == ClaimTypes.NameIdentifier).FirstOrDefault().Value);
+                if (Bookmark.OwnerId != currentUserId)
+                {
+                    ErrorMessage = "You are not allowed to delete this bookmark.";
+                    return RedirectToPage("/Index");
+                }
+
+                try
+                {
+                    await _bookmarksManager.Delete((int)id);
+                    SuccessMessage = "Bookmark has been removed.";
+                }
+                catch
+                {
+                    ErrorMessage = "There was error during bookmark removal.";
+                }
             }
 
             return RedirectToPage("./Index");
